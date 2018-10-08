@@ -1,9 +1,10 @@
 
 # coding: utf-8
 
-# In[7]:
+# In[1]:
 
 
+import sys
 
 def medistance(source, target):
     #length of the source and target assigned to n and m respecitvely
@@ -39,9 +40,9 @@ def medistance(source, target):
     #Termination
     return D [n][m]
 
-
-s="intention"
-t="execution"
+medistance(sys.argv[1], sys.argv[2])
+s=sys.argv[1]
+t=sys.argv[2]
 
 print ("Minimum edit distance between", s, "and", t, "is", medistance(s,t))
 
