@@ -17,7 +17,7 @@ def medistance(source, target):
     del_cost=1
     
     #creation of the distance matrix using a 2-D array
-    D=[[0 for a in range(n+1)] for a in range(m+1)]
+    D=[[0 for a in range(m+1)] for a in range(n+1)]
     
     #initializing the zeroth row 
     for i in range (0, n+1):
