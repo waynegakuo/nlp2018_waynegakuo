@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[8]:
-
-
 import sys
 import os
 import re
@@ -69,12 +63,15 @@ def classifier():
                 negatives.append(line)
         
         n_doc=positive_counter+negative_counter #total number of sentences in the file
+        #print(negative_counter)
+        #print(positive_counter)
+        
         for x in classes:
             if x is '0':
-                logprior_negative=math.log(negative_counter/n_doc) #finding the logprior of the negative class
+                logprior_negative=math.log(negative_counter/n_doc) #finding the logprior of the negative class 
                 logprior.append(logprior_negative) #appends the result into a log prior list
             elif x is '1':
-                logprior_positive=math.log(positive_counter/n_doc) #finding the logprior of the positive class
+                logprior_positive=math.log(positive_counter/n_doc) #finding the logprior of the positive class 
                 logprior.append(logprior_positive)
                 
         frequency_total_positive=freq(positives) #frequency of all the words in positive
@@ -108,38 +105,35 @@ def classifier():
 
 # In[11]:
 
-
 def test_naive(file):
     bag_of_words, bag_length=extract()
     predict_array=[]
     logprior, positive_dict, negative_dict=classifier()
-    file = open(file)
-    text=file.read()
+    file = open(file, "r")
+    positive_prob=logprior[1]
+    negative_prob=logprior[0]
     for line in file:
-        print(line)
-        exit()
-        positive_prob=logprior[1]
-        negative_prob=logprior[0]
-            
         refined_line=line.lower()
         refined_line=refined_line.translate(str.maketrans("","",string.punctuation))
         refined_line=refined_line.split(" ")
+        #print (refined_line)
             
         for i in refined_line:
-            if refined_line[i] in bag_of_words:
-                positive_prob += positive_dict[refined_line[i]]
-                negative_prob += negative_dict[refined_line[i]]
+            if i in bag_of_words:
+                positive_prob += positive_dict[i]
+                negative_prob += negative_dict[i]
                     
         if positive_prob > negative_prob:
             predict_array.append('1')
         else:
             predict_array.append('0')
     
-    print(predict_array)
+    #print(predict_array)
+    
     f=open("results.txt", "w")
     
     for item in predict_array:
-        f.write(item)
+        f.write(item+"\n")
     f.close()
 
 
@@ -150,8 +144,10 @@ def main():
     #classifier()
     #print (logprior)
     logprior, positive_dict, negative_dict= classifier()
-    #print (logprior)
-    test_naive('imdb_labelled.txt')
+    print (logprior)
+    
+    #test_naive('yelp_labelled.txt')
+    test_naive(sys.argv[1])
     
     '''positive_class, negative_class, positive_freq, negative_freq, bag_length=classifier() #works
     print('Positive Class length is', positive_class) #works
