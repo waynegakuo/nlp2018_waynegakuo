@@ -150,8 +150,8 @@ def main():
     logprior, positive_dict, negative_dict= classifier()
     print (logprior)
     
-    test_naive('yelp_labelled.txt')
-    #test_naive(sys.argv[1])
+    #test_naive('yelp_labelled.txt')
+    test_naive(sys.argv[1])
     
     '''positive_class, negative_class, positive_freq, negative_freq, bag_length=classifier() #works
     print('Positive Class length is', positive_class) #works
