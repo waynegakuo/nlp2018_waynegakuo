@@ -1,3 +1,9 @@
+
+# coding: utf-8
+
+# In[1]:
+
+
 import sys
 import os
 import re
@@ -26,7 +32,7 @@ def freq(list):
     return (b)
 
 
-# In[9]:
+# In[2]:
 
 
 #function that returns a bag of words and its length
@@ -40,7 +46,7 @@ def extract():
     file.close()
 
 
-# In[10]:
+# In[3]:
 
 
 #function that uniquely identifies words and places them in a vocabulary list
@@ -63,15 +69,12 @@ def classifier():
                 negatives.append(line)
         
         n_doc=positive_counter+negative_counter #total number of sentences in the file
-        #print(negative_counter)
-        #print(positive_counter)
-        
         for x in classes:
             if x is '0':
-                logprior_negative=math.log(negative_counter/n_doc) #finding the logprior of the negative class 
+                logprior_negative=math.log(negative_counter/n_doc) #finding the logprior of the negative class
                 logprior.append(logprior_negative) #appends the result into a log prior list
             elif x is '1':
-                logprior_positive=math.log(positive_counter/n_doc) #finding the logprior of the positive class 
+                logprior_positive=math.log(positive_counter/n_doc) #finding the logprior of the positive class
                 logprior.append(logprior_positive)
                 
         frequency_total_positive=freq(positives) #frequency of all the words in positive
@@ -103,7 +106,8 @@ def classifier():
     file.close()
 
 
-# In[11]:
+# In[4]:
+
 
 def test_naive(file):
     bag_of_words, bag_length=extract()
@@ -137,7 +141,7 @@ def test_naive(file):
     f.close()
 
 
-# In[ ]:
+# In[5]:
 
 
 def main():
@@ -146,8 +150,8 @@ def main():
     logprior, positive_dict, negative_dict= classifier()
     print (logprior)
     
-    #test_naive('yelp_labelled.txt')
-    test_naive(sys.argv[1])
+    test_naive('yelp_labelled.txt')
+    #test_naive(sys.argv[1])
     
     '''positive_class, negative_class, positive_freq, negative_freq, bag_length=classifier() #works
     print('Positive Class length is', positive_class) #works
