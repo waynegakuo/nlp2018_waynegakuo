@@ -77,7 +77,7 @@ def train_u():
     return naive_train_u, vu
 
 
-# In[4]:
+# In[1]:
 
 
 ###################################################################################################################
@@ -101,11 +101,12 @@ def nb(cl, mod, test_file):
 
     # writing the results into a text file
     for item in predict_array:
-        f.write(str(item) + "\n")
+        res = str(item)
+        f.write(res.strip('[]') + "\n")
     f.close()
 
 
-# In[5]:
+# In[2]:
 
 
 ###################################################################################################################
@@ -129,7 +130,8 @@ def nb_u(cl, mod, test_file):
 
     # writing the results into a text file
     for item in predict_array_u:
-        f.write(str(item) + "\n")
+        res = str(item)
+        f.write(res.strip('[]') + "\n")
     f.close()
 
 
