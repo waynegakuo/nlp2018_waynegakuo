@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[3]:
 
 
 import sys
@@ -12,18 +12,25 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import naive_bayes
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
+# import NP as NP
+from pylab import *
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
 
-# In[2]:
+# In[17]:
 
 
 ################################################################################################################
-# Train classifier while normalizing text
+# Train classifiers while normalizing text
 ################################################################################################################
+file_to_read = "train_data.txt"  # file to be read
+
 
 def train():
     # setting the data-set into a data-frame for easy management and manipulation using pandas
-    doc = pd.read_csv("amazon_cells_labelled.txt", sep='\t', names=['review', 'sentiment'])
+    doc = pd.read_csv(file_to_read, sep='\t', names=['review', 'sentiment'])
     # print(doc.tail())
 
     # stop words such as 'a', 'is', 'are' are not significant to the corpus for analysis and therefore
@@ -47,14 +54,24 @@ def train():
     naive_train = naive_bayes.MultinomialNB()
     naive_train.fit(token_train, class_train)
 
-    return naive_train, v
+    # training the logistic regression classifier
+    log_train = LogisticRegression(penalty='l2', C=1)
+    log_train.fit(token_train, class_train)
+
+    print("Logistic Regression classifier accuracy with normalized data is %2.2f"
+          % accuracy_score(class_test, log_train.predict(token_test)))
+
+    print("Naive Bayes classifier accuracy with normalized data is %2.2f"
+          % accuracy_score(class_test, naive_train.predict(token_test)))
+
+    return naive_train, log_train, v
 
 
-# In[3]:
+# In[18]:
 
 
 ################################################################################################################
-# Train classifier without normalizing text
+# Train classifiers without normalizing text
 ################################################################################################################
 
 def train_u():
@@ -62,7 +79,7 @@ def train_u():
     vu = TfidfVectorizer(use_idf=False, lowercase=False)
 
     # setting the data-set into a data-frame for easy management and manipulation using pandas
-    doc = pd.read_csv("amazon_cells_labelled.txt", sep='\t', names=['review', 'sentiment'])
+    doc = pd.read_csv(file_to_read, sep='\t', names=['review', 'sentiment'])
 
     class_categ_u = doc.sentiment  # positive and negative classes
     token_u = vu.fit_transform(doc.review)
@@ -74,10 +91,20 @@ def train_u():
     naive_train_u = naive_bayes.MultinomialNB()
     naive_train_u.fit(token_u_train, class_u_train)
 
-    return naive_train_u, vu
+    # training the logistic regression classifier
+    log_train_u = LogisticRegression(penalty='l2', C=1)
+    log_train_u.fit(token_u_train, class_u_train)
+
+    print("Logistic Regression classifier accuracy with unnormalized data is %2.2f"
+          % accuracy_score(class_u_test, log_train_u.predict(token_u_test)))
+
+    print("Naive Bayes classifier accuracy with unnormalized data is %2.2f"
+          % roc_auc_score(class_u_test, naive_train_u.predict(token_u_test)))
+
+    return naive_train_u, log_train_u, vu
 
 
-# In[1]:
+# In[19]:
 
 
 ###################################################################################################################
@@ -85,7 +112,7 @@ def train_u():
 ###################################################################################################################
 
 def nb(cl, mod, test_file):
-    naive_train, v = train()
+    naive_train, log_train, v = train()
     file = open(test_file, "r")
     predict_array = []  # initialize array to contain classifier results
     for line in file:
@@ -106,7 +133,29 @@ def nb(cl, mod, test_file):
     f.close()
 
 
-# In[2]:
+def lr(cl, mod, test_file):
+    naive_train, log_train, v = train()
+    file = open(test_file, "r")
+    lr_predict_array = []  # initialize array to contain classifier results
+    for line in file:
+        # treating each line by putting them into an array using an inbuilt panda function
+        movie_review_arr = pd.np.array([line])
+        movie_vect = v.transform(movie_review_arr)
+        class_placed = log_train.predict(movie_vect)
+
+        # putting the classification results into an array
+        lr_predict_array.append(class_placed)
+
+    f = open("lr-n.txt", "w")
+
+    # writing the results into a text file
+    for item in lr_predict_array:
+        res = str(item)
+        f.write(res.strip('[]') + "\n")
+    f.close()
+
+
+# In[20]:
 
 
 ###################################################################################################################
@@ -114,7 +163,7 @@ def nb(cl, mod, test_file):
 ###################################################################################################################
 
 def nb_u(cl, mod, test_file):
-    naive_train_u, vu = train_u()
+    naive_train_u, log_train_u, vu = train_u()
     file = open(test_file, "r")
     predict_array_u = []  # initialize array to contain classifier results
     for line in file:
@@ -135,26 +184,64 @@ def nb_u(cl, mod, test_file):
     f.close()
 
 
-# In[6]:
+def lr_u(cl, mod, test_file):
+    naive_train_u, log_train_u, vu = train_u()
+    file = open(test_file, "r")
+    lr_predict_array_2 = []  # initialize array to contain classifier results
+    for line in file:
+        # treating each line by putting them into an array using an inbuilt panda function
+        movie_review_arr = pd.np.array([line])
+        movie_vect = vu.transform(movie_review_arr)
+        class_placed = log_train_u.predict(movie_vect)
+
+        # putting the classification results into an array
+        lr_predict_array_2.append(class_placed)
+
+    f = open("lr-u.txt", "w")
+
+    # writing the results into a text file
+    for item in lr_predict_array_2:
+        res = str(item)
+        f.write(res.strip('[]') + "\n")
+    f.close()
+
+
+# In[21]:
 
 
 # Execute 
 
 # accepting arguments from the command line
-nb(sys.argv[1], sys.argv[2], sys.argv[3])
-nb_u(sys.argv[1], sys.argv[2], sys.argv[3])
 
 if sys.argv[1] == "nb" and sys.argv[2] == "n":
     cl = sys.argv[1]
     mod = sys.argv[2]
     test_file = sys.argv[3]
-    print("Naive Bayes Classifier with Normalized Data")
+    print("\n")
+    print("######## Naive Bayes Classifier with Normalized Data ########")
     nb(cl, mod, test_file)
 
 elif sys.argv[1] == "nb" and sys.argv[2] == "u":
     cl = sys.argv[1]
     mod = sys.argv[2]
     test_file = sys.argv[3]
-    print("Naive Bayes Classifier Without Normalized Data")
+    print("\n")
+    print("######## Naive Bayes Classifier Without Normalized Data ########")
     nb_u(cl, mod, test_file)
+
+elif sys.argv[1] == "lr" and sys.argv[2] == "n":
+    cl = sys.argv[1]
+    mod = sys.argv[2]
+    test_file = sys.argv[3]
+    print("\n")
+    print("######## Logistic Regression Classifier With Normalized Data ########")
+    lr(cl, mod, test_file)
+
+elif sys.argv[1] == "lr" and sys.argv[2] == "u":
+    cl = sys.argv[1]
+    mod = sys.argv[2]
+    test_file = sys.argv[3]
+    print("\n")
+    print("######## Logistic Regression Classifier Without Normalized Data ########")
+    lr_u(cl, mod, test_file)
 
