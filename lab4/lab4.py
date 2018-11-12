@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[3]:
+# In[4]:
 
 
 import sys
@@ -19,7 +19,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
 
-# In[17]:
+# In[5]:
 
 
 ################################################################################################################
@@ -67,7 +67,7 @@ def train():
     return naive_train, log_train, v
 
 
-# In[18]:
+# In[6]:
 
 
 ################################################################################################################
@@ -104,7 +104,7 @@ def train_u():
     return naive_train_u, log_train_u, vu
 
 
-# In[19]:
+# In[7]:
 
 
 ###################################################################################################################
@@ -124,7 +124,7 @@ def nb(cl, mod, test_file):
         # putting the classification results into an array
         predict_array.append(class_placed)
 
-    f = open("nb-n.txt", "w")
+    f = open("results-nb-n.txt", "w")
 
     # writing the results into a text file
     for item in predict_array:
@@ -146,7 +146,7 @@ def lr(cl, mod, test_file):
         # putting the classification results into an array
         lr_predict_array.append(class_placed)
 
-    f = open("lr-n.txt", "w")
+    f = open("results-lr-n.txt", "w")
 
     # writing the results into a text file
     for item in lr_predict_array:
@@ -155,7 +155,7 @@ def lr(cl, mod, test_file):
     f.close()
 
 
-# In[20]:
+# In[8]:
 
 
 ###################################################################################################################
@@ -175,7 +175,7 @@ def nb_u(cl, mod, test_file):
         # putting the classification results into an array
         predict_array_u.append(class_placed)
 
-    f = open("nb-u.txt", "w")
+    f = open("results-nb-u.txt", "w")
 
     # writing the results into a text file
     for item in predict_array_u:
@@ -197,16 +197,17 @@ def lr_u(cl, mod, test_file):
         # putting the classification results into an array
         lr_predict_array_2.append(class_placed)
 
-    f = open("lr-u.txt", "w")
+    f = open("results-lr-u.txt", "w")
 
     # writing the results into a text file
     for item in lr_predict_array_2:
         res = str(item)
         f.write(res.strip('[]') + "\n")
     f.close()
+    
 
 
-# In[21]:
+# In[9]:
 
 
 # Execute 
